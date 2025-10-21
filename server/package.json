@@ -1,22 +1,27 @@
 {
-  "name": "mern-direct-chat-server",
+  "name": "server",
   "version": "1.0.0",
-  "private": true,
-  "main": "src/index.js",
-  "license": "MIT",
+  "description": "server for real time chat application",
+  "license": "ISC",
+  "author": "aditya",
+  "type": "module",
+  "main": "index.js",
   "scripts": {
-    "dev": "node src/index.js",
-    "start": "NODE_ENV=production node src/index.js"
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.6.0",
-    "socket.io": "^4.7.5"
+    "mongoose": "^8.19.1",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
-
-
