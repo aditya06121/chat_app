@@ -1,18 +1,8 @@
 import { Router } from "express";
+import { registerUser, login } from "../controller/users.controller.js";
 const userRouter = Router();
 
-const registerUser = (req, res) => {
-  const { name, pass } = req.body || {};
-  if (name === "adi" && pass === "adi") {
-    return res.status(201).json(`correct`);
-  }
-  return res.status(401).json(`incorrect`);
-};
-
-const hello = (req, res) => {
-  res.send(`get is working`);
-};
-
-userRouter.route("/register").post(registerUser).get(hello);
+userRouter.route("/register").post(registerUser);
+userRouter.route("/login").post(login);
 
 export default userRouter;

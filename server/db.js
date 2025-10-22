@@ -8,7 +8,6 @@ async function dbConnect() {
   try {
     const connect = await mongoose.connect(db);
     console.log(`connection established with db`);
-    console.log(connect);
     return connect;
   } catch (error) {
     console.log(`connection not established!`);
