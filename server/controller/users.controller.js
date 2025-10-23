@@ -24,7 +24,7 @@ const options = {
 const registerUser = async (req, res) => {
   try {
     const { fullName, userName, password } = req.body;
-    if ([fullName, userName, password].some((field) => field.trim() === "")) {
+    if ([fullName, userName, password].some((field) => !field?.trim() === "")) {
       return res.status(400).json({ error: "fields are empty" });
     }
     const userExists = await user.findOne({ userName });
@@ -61,9 +61,10 @@ const registerUser = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { userName, password } = req.body;
-    if ([userName, password].some((field) => field.trim() === "")) {
+    if ([userName, password].some((field) => !field?.trim())) {
       return res.status(400).json({ error: "fields are empty" });
     }
+
     const foundUser = await user.findOne({ userName: userName });
     if (!foundUser) {
       return res.status(401).send(`username does not exist`);
