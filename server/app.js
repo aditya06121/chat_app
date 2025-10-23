@@ -9,6 +9,6 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use("/api/users", userRouter);
+app.use("/api/auth", userRouter);
 
 export default app;
