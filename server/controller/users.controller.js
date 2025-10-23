@@ -6,7 +6,7 @@ async function generateRefreshAndAccessToken(userId) {
     const usr = await user.findById(userId);
     const AccessToken = usr.generateAccessToken();
     const RefreshToken = usr.generateRefreshToken();
-    usr.refreshToken = RefreshToken;
+    usr.RefreshToken = RefreshToken;
     await usr.save();
     return { AccessToken, RefreshToken };
   } catch (error) {
@@ -48,7 +48,7 @@ const registerUser = async (req, res) => {
     return res
       .status(201)
       .cookie("AccessToken", AccessToken, options)
-      .cookie("refreshToken", RefreshToken, options)
+      .cookie("RefreshToken", RefreshToken, options)
       .json({ status: "user registered successfully" });
   } catch (e) {
     return res.status(500).json({
@@ -89,12 +89,12 @@ const logout = async (req, res) => {
   try {
     const id = req.user._id;
     await user.findByIdAndUpdate(id, {
-      $unset: { refreshToken: 1 },
+      $unset: { RefreshToken: 1 },
     });
     return res
       .status(200)
       .clearCookie("AccessToken", options)
-      .clearCookie("refreshToken", options)
+      .clearCookie("RefreshToken", options)
       .json({ status: "logged out successfully" });
   } catch (error) {
     return res.status(500).json({ status: "logout failed", error: error });
@@ -114,7 +114,7 @@ const refreshAccessToken = async (req, res) => {
     if (!foundUser) {
       return res.status(401).json({ error: "Invalid token" });
     }
-    if (token !== foundUser.refreshToken) {
+    if (token !== foundUser.RefreshToken) {
       return res
         .status(401)
         .json({ status: "refresh token is expired or used" });

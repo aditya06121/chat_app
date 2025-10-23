@@ -22,7 +22,7 @@ const userSchema = new Schema({
     lastSeen: { type: Date, default: Date.now },
   },
   password: { type: String, required: [true, "password is required"] },
-  refreshToken: { type: String },
+  RefreshToken: { type: String },
   contacts: [{ type: Schema.Types.ObjectId, ref: "User" }],
 });
 
