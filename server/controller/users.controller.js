@@ -133,4 +133,73 @@ const refreshAccessToken = async (req, res) => {
   }
 };
 
-export { registerUser, login, logout, refreshAccessToken };
+const getUser = async (req, res) => {
+  try {
+    const searchUser = req.query.search;
+    const foundUser = await user.findOne({ userName: searchUser });
+    if (!foundUser)
+      return res.status(401).json({ error: "unable to find user" });
+    return res
+      .status(200)
+      .json({ status: "successfully found user", user: foundUser._id });
+  } catch (error) {
+    return res.status(500).json({ status: "server failed", error: error });
+  }
+};
+
+const addContact = async (req, res) => {
+  try {
+    const userid = req.params.userid;
+    const loggedInUser = req.user._id.toString();
+    if (userid !== loggedInUser)
+      return res.status(401).json({ error: "unauthorized" });
+    const { userName } = req.body;
+    const userExists = await user.findOne({ userName });
+    if (!userExists) {
+      return res.status(409).json({ error: "user does not exist" });
+    }
+    if (req.user.contacts.includes(userExists._id)) {
+      return res.status(400).json({ error: "Already in contacts" });
+    }
+    // to add to contact in both the logged in user as well to whom the request is sent
+    req.user.contacts.push(userExists._id);
+    userExists.contacts.push(req.user._id);
+    await req.user.save();
+    await userExists.save();
+
+    return res
+      .status(201)
+      .json({ status: `contact ${userExists.userName} added successfully` });
+  } catch (error) {
+    return res.status(500).json({ status: "server failed", error: error });
+  }
+};
+
+const contacts = async (req, res) => {
+  try {
+    const userid = req.params.userid;
+    const loggedInUser = req.user._id.toString();
+    if (userid !== loggedInUser)
+      return res.status(401).json({ error: "unauthorized" });
+
+    const userWithContacts = await user
+      .findById(req.user._id)
+      .populate("contacts", "userName email");
+
+    return res.status(200).json({
+      contacts: userWithContacts.contacts,
+    });
+  } catch (error) {
+    return res.status(500).json({ status: "server failed", error: error });
+  }
+};
+
+export {
+  registerUser,
+  login,
+  logout,
+  refreshAccessToken,
+  getUser,
+  addContact,
+  contacts,
+};
