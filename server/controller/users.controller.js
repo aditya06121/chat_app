@@ -37,6 +37,7 @@ const registerUser = async (req, res) => {
       userName: userName.toLowerCase(),
       password: password,
     });
+    newUser.status.online = true;
 
     await newUser.save();
     const createdUser = await user.findById(newUser._id);
@@ -76,6 +77,8 @@ const login = async (req, res) => {
     const { AccessToken, RefreshToken } = await generateRefreshAndAccessToken(
       foundUser._id
     );
+    foundUser.status.online = true;
+    await foundUser.save();
     return res
       .status(200)
       .cookie("AccessToken", AccessToken, options)
@@ -91,7 +94,11 @@ const logout = async (req, res) => {
     const id = req.user._id;
     await user.findByIdAndUpdate(id, {
       $unset: { RefreshToken: 1 },
+      $set: { "status.online": true, "status.lastSeen": Date.now() },
     });
+    req.user.status.online = false;
+    req.user.lastSeen = new Date();
+    await req.user.save();
     return res
       .status(200)
       .clearCookie("AccessToken", options)
@@ -127,7 +134,10 @@ const refreshAccessToken = async (req, res) => {
       .status(201)
       .cookie("AccessToken", AccessToken, options)
       .cookie("RefreshToken", RefreshToken, options)
-      .json({ status: "Tokens generated successfully" });
+      .json({
+        status: "Tokens generated successfully",
+        user: foundUser.userName,
+      });
   } catch (error) {
     return res.status(500).json({ status: "Server failed", error: error });
   }
